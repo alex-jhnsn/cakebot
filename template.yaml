@@ -1,0 +1,74 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description:
+    Cakebot code
+    
+Globals:
+    Function:
+        Timeout: 20
+
+Parameters:
+  PolicyStackNameParameter:
+    Type: String
+    Default: cakebot-iam
+    Description: The name of the stack that declares this stacks IAM policy ARNs
+
+Resources:
+
+    UsersFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: src/
+            Handler: UsersHandler.handle
+            Runtime: python3.6
+            Events:
+                AddUser:
+                    Type: Api
+                    Properties:
+                      Path: /users/add
+                      Method: post
+                DeleteUser:
+                    Type: Api
+                    Properties:
+                      Path: /users/delete
+                      Method: post
+            Role:
+              Fn::ImportValue:
+                !Sub "${PolicyStackNameParameter}-UsersFunctionRoleArn"
+    
+    BakersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+        - AttributeName: "LastBaked"
+          AttributeType: "S"
+        - AttributeName: "TimesBaked"
+          AttributeType: "N"
+        # - AttributeName: "Baking"
+        #   AttributeType: "BOOL"
+        KeySchema:
+        - AttributeName: "LastBaked"
+          KeyType: "HASH"
+        - AttributeName: "TimesBaked"
+          KeyType: "RANGE"
+        # GlobalSecondaryIndexes:
+        #   IndexName: BakingThisWeek
+        #   KeySchema:
+        #     - AttributeName: "Baking"
+        #       KeyType: "HASH"
+          
+    
+Outputs:
+
+    UsersApi:
+      Description: "API Gateway endpoint URL for Prod stage for End Retro function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/CakeBot/"
+
+    UsersFunction:
+      Description: "End Retro Lambda Function ARN"
+      Value: !GetAtt UsersFunction.Arn
+
+    UsersFunctionIamRole:
+      Description: "Implicit IAM Role created for End Retro function"
+      Value: !GetAtt UsersFunctionRole.Arn

@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Cakebot Roles"
+
+Parameters:
+    CakeBotStackName:
+      Type: String
+      Default: cakebot
+      Description: The name of the stack consuming the roles declared within this stack.
+
+Resources:
+  UsersFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Policies:
+        - PolicyName: UsersPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+            - Effect: Allow
+              Action:
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:GetItem
+              - dynamodb:DeleteItem
+              Resource:
+                - !Sub arn:aws:dynamodb:*:*:table/${CakeBotStackName}-*
+
+Outputs:
+  TokenAuthorizerFunctionRoleArn:
+    Value: !GetAtt UsersFunctionRole.Arn
+    Description: The UsersFunctionRole Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-UsersFunctionRoleArn"
