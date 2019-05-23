@@ -9,12 +9,9 @@ def handle(event, context):
 
     try:
         body = event['body']
-        print('body = ' + body)
         parsedBody = urllib.parse.parse_qs(body)
         username = parsedBody['user_name'][0]
-        print(username)
         userId = parsedBody['user_id'][0]
-
     except:
         print('Request was missing user')
         return {
@@ -24,15 +21,15 @@ def handle(event, context):
 
     operation = re.sub(r'\/users\/', '', event['resource'])
     if operation == 'add':
-        Users.addBaker(username)
-        print('Adding user ' + username)
+        Users.addBaker(userId, username)
+        print('Added user ' + username)
         return {
             'statusCode': 200,
             'body': 'You are now a baker!'
         }
     elif operation == 'delete':
-        Users.deleteBaker(username)
-        print('Removing user ' + username)
+        Users.deleteBaker(userId)
+        print('Removed user ' + username)
         return {
             'statusCode': 200,
             'body': 'You are no longer a baker.'

@@ -32,26 +32,21 @@ Resources:
                     Properties:
                       Path: /users/delete
                       Method: post
-            Role:
-              Fn::ImportValue:
-                !Sub "${PolicyStackNameParameter}-UsersFunctionRoleArn"
     
     BakersTable:
       Type: AWS::DynamoDB::Table
       Properties:
         BillingMode: PAY_PER_REQUEST
         AttributeDefinitions:
-        - AttributeName: "LastBaked"
+        - AttributeName: "UserId"
           AttributeType: "S"
-        - AttributeName: "TimesBaked"
-          AttributeType: "N"
+        # - AttributeName: "TimesBaked"
+        #   AttributeType: "N"
         # - AttributeName: "Baking"
         #   AttributeType: "BOOL"
         KeySchema:
-        - AttributeName: "LastBaked"
+        - AttributeName: "UserId"
           KeyType: "HASH"
-        - AttributeName: "TimesBaked"
-          KeyType: "RANGE"
         # GlobalSecondaryIndexes:
         #   IndexName: BakingThisWeek
         #   KeySchema:

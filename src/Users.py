@@ -19,14 +19,15 @@ class DecimalEncoder(json.JSONEncoder):
                 return int(o)
         return super(DecimalEncoder, self).default(o)
 
-def addBaker(user):
+def addBaker(userId, username):
 
     table = DynamoDbConnection.getBakersTable()
 
     response = table.put_item(
         Item = {
-            'SlackId': user,
+            'UserId': userId,
             'TimesBaked': 0,
+            'Username': username,
             'LastBaked': datetime.datetime(1970, 1, 1, 0, 0, 0).__str__(),
             'Available': True,
             'Baking': False
@@ -45,7 +46,7 @@ def deleteBaker(user):
     try:
         response = table.delete_item(
             Key={
-                'SlackId': user,
+                'UserId': user,
             }
         )
     except ClientError as e:
