@@ -23,15 +23,28 @@ Resources:
             Runtime: python3.6
             Events:
                 AddUser:
-                    Type: Api
-                    Properties:
-                      Path: /users/add
-                      Method: post
+                  Type: Api
+                  Properties:
+                    Path: /users/add
+                    Method: post
                 DeleteUser:
-                    Type: Api
-                    Properties:
-                      Path: /users/delete
-                      Method: post
+                  Type: Api
+                  Properties:
+                    Path: /users/delete
+                    Method: post
+    
+    GetBakingFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+          CodeUri: src/
+          Handler: BakingHandler.handle
+          Runtime: python3.6
+          Events:
+            Get:
+              Type: Api
+              Properties:
+                Path: /baking
+                Method: post
     
     BakersTable:
       Type: AWS::DynamoDB::Table
@@ -40,18 +53,28 @@ Resources:
         AttributeDefinitions:
         - AttributeName: "UserId"
           AttributeType: "S"
-        # - AttributeName: "TimesBaked"
-        #   AttributeType: "N"
-        # - AttributeName: "Baking"
-        #   AttributeType: "BOOL"
+        - AttributeName: "TimesBaked"
+          AttributeType: "N"
+        - AttributeName: "Baking"
+          AttributeType: "S"
         KeySchema:
         - AttributeName: "UserId"
           KeyType: "HASH"
-        # GlobalSecondaryIndexes:
-        #   IndexName: BakingThisWeek
-        #   KeySchema:
-        #     - AttributeName: "Baking"
-        #       KeyType: "HASH"
+        GlobalSecondaryIndexes:
+        - IndexName: BakingThisWeek
+          KeySchema:
+          - AttributeName: "Baking"
+            KeyType: "HASH"
+          Projection:
+            ProjectionType: "ALL"
+        - IndexName: OrderedBakers
+          KeySchema:
+          - AttributeName: "UserId"
+            KeyType: "HASH"
+          - AttributeName: "TimesBaked"
+            KeyType: "RANGE"
+          Projection:
+            ProjectionType: "ALL"
           
     
 Outputs:

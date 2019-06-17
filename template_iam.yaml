@@ -36,9 +36,41 @@ Resources:
               Resource:
                 - !Sub arn:aws:dynamodb:*:*:table/${CakeBotStackName}-*
 
+  BakingFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Policies:
+        - PolicyName: BakingPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+            - Effect: Allow
+              Action:
+              - dynamodb:Scan
+              - dynamodb:Query
+              - dynamodb:UpdateItem
+              Resource:
+                - !Sub arn:aws:dynamodb:*:*:table/${CakeBotStackName}-*
+
 Outputs:
-  TokenAuthorizerFunctionRoleArn:
+  UsersFunctionRoleArn:
     Value: !GetAtt UsersFunctionRole.Arn
     Description: The UsersFunctionRole Arn
     Export:
       Name: !Sub "${AWS::StackName}-UsersFunctionRoleArn"
+  BakingFunctionRoleArn:
+    Value: !GetAtt BakingFunctionRole.Arn
+    Description: The BakingFunctionRole Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-BakingFunctionRoleArn"

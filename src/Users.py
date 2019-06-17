@@ -3,12 +3,7 @@ import boto3
 from botocore.exceptions import ClientError
 import datetime
 import decimal
-import DynamoDbConnection
-
-def getTable():
-    dynamodb = boto3.resource('dynamodb', region_name='eu-west-1', endpoint_url="dynamodb.eu-west-1.amazonaws.com")
-    table = dynamodb.Table('Bakers')
-    return table
+import Database
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, o):
@@ -21,7 +16,7 @@ class DecimalEncoder(json.JSONEncoder):
 
 def addBaker(userId, username):
 
-    table = DynamoDbConnection.getBakersTable()
+    table = Database.getBakersTable()
 
     response = table.put_item(
         Item = {
@@ -29,8 +24,8 @@ def addBaker(userId, username):
             'TimesBaked': 0,
             'Username': username,
             'LastBaked': datetime.datetime(1970, 1, 1, 0, 0, 0).__str__(),
-            'Available': True,
-            'Baking': False
+            'Available': 'true',
+            'Baking': 'false'
         }
     )
 
@@ -41,7 +36,7 @@ def addBaker(userId, username):
 
 def deleteBaker(user):
 
-    table = DynamoDbConnection.getBakersTable()
+    table = Database.getBakersTable()
 
     try:
         response = table.delete_item(

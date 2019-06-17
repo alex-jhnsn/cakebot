@@ -21,6 +21,7 @@ def handle(event, context):
 
     operation = re.sub(r'\/users\/', '', event['resource'])
     if operation == 'add':
+        #ToDo - If user is already a baker, don't add the bastard
         Users.addBaker(userId, username)
         print('Added user ' + username)
         return {

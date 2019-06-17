@@ -1,4 +1,7 @@
-#AWS Deployment
+# Plans
+plans.txt
+
+# AWS Deployment
 deploy.sh
 packaged.yaml
 packaged_iam.yaml
