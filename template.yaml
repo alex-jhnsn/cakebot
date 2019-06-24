@@ -15,18 +15,26 @@ Parameters:
 
 Resources:
 
-    UsersFunction:
+    AddBakerFunction:
         Type: AWS::Serverless::Function
         Properties:
             CodeUri: src/
-            Handler: UsersHandler.handle
-            Runtime: python3.6
+            Handler: AddBakerHandler.handle
+            Runtime: nodejs8.10
             Events:
                 AddUser:
                   Type: Api
                   Properties:
                     Path: /users/add
                     Method: post
+
+    DeleteBakerFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: src/
+            Handler: DeleteBakerHandler.handle
+            Runtime: nodejs8.10
+            Events:
                 DeleteUser:
                   Type: Api
                   Properties:
@@ -37,8 +45,8 @@ Resources:
         Type: AWS::Serverless::Function
         Properties:
           CodeUri: src/
-          Handler: BakingHandler.handle
-          Runtime: python3.6
+          Handler: CalculateBakersHandler.handle
+          Runtime: nodejs8.10
           Events:
             Get:
               Type: Api
@@ -77,16 +85,24 @@ Resources:
             ProjectionType: "ALL"
           
     
-Outputs:
+# Outputs:
 
-    UsersApi:
-      Description: "API Gateway endpoint URL for Prod stage for End Retro function"
-      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/CakeBot/"
+#     CakeBotApi:
+#       Description: "API Gateway endpoint URL for Prod stage for cakebot function"
+#       Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/CakeBot/"
 
-    UsersFunction:
-      Description: "End Retro Lambda Function ARN"
-      Value: !GetAtt UsersFunction.Arn
+#     AddBakerFunction:
+#       Description: "AddBaker Lambda Function ARN"
+#       Value: !GetAtt AddBakerFunction.Arn
 
-    UsersFunctionIamRole:
-      Description: "Implicit IAM Role created for End Retro function"
-      Value: !GetAtt UsersFunctionRole.Arn
+#     AddBakerFunction:
+#       Description: "AddBaker Lambda Function ARN"
+#       Value: !GetAtt AddBakerFunction.Arn
+
+#     AddBakerFunction:
+#       Description: "AddBaker Lambda Function ARN"
+#       Value: !GetAtt AddBakerFunction.Arn
+
+#     UsersFunctionIamRole:
+#       Description: "Implicit IAM Role created for End Retro function"
+#       Value: !GetAtt UsersFunctionRole.Arn
